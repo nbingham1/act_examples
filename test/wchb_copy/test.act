@@ -1,0 +1,12 @@
+import "globals.act";
+import "channel.act";
+import "source.act";
+import "sink.act";
+import "copy.act";
+
+globals g;
+e1of<2> L, R0, R1;
+wchb::copy test(g, L, R0, R1);
+source_random_e1of<2> Lsrc(g, L);
+sink_e1of<2, 6> R0sink(g, R0);
+sink_e1of<2, 6> R1sink(g, R1);
