@@ -2,7 +2,7 @@ import "globals.act";
 import "channel.act";
 import "source.act";
 import "sink.act";
-import "adder/adder.act";
+import "adder.act";
 
 globals g;
 e1of<2> A, B, Ci, S, Co;
