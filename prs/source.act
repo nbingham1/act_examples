@@ -1,0 +1,139 @@
+import "globals.act";
+import "channel.act";
+
+/************************************
+ *                                  *
+ *         enable channels          *
+ *                                  *
+ ************************************/
+
+export template <pint N>
+defproc source_random_e1of(globals g; e1of<N> C)
+{
+	[ ~LAYOUT ->
+		(j:N: 
+			(k:N:
+				[ k > j -> spec { mk_exclhi(C.d[j], C.d[k]) } ]
+			)
+
+			prs <g.Vdd, g.GND>
+			{
+				~g.sReset &  C.e -> C.d[j]+
+				 g.sReset | ~C.e -> C.d[j]-
+			}
+		)
+	]
+}
+
+export template <pint N, sz>
+defproc source_disconnect_e1of(globals g; e1of<N> C)
+{
+	(j:N:
+		prs <g.Vdd, g.GND> {
+			g.Vdd -> C.d[j]-
+		}
+	)
+}
+
+/************************************
+ *									*
+ *	multi-bundle enable channels	*
+ *									*
+ ************************************/
+
+export template <pint M, N>
+defproc source_random_eMx1ofN(globals g; eMx1ofN<M, N> C)
+{
+	[ ~LAYOUT ->
+		(i:M: (j:N: 
+			(k:N:
+				[ k > j -> spec { mk_exclhi(C.b[i].d[j], C.b[i].d[k]) } ]
+			)
+
+			prs <g.Vdd, g.GND>
+			{
+				~g.sReset &  C.e -> C.b[i].d[j]+
+				 g.sReset | ~C.e -> C.b[i].d[j]-
+			}
+		) )
+	]	
+}
+
+export template <pint M, N>
+defproc source_disconnect_eMx1ofN(globals g; eMx1ofN<M, N> C)
+{
+	(i:M: (j:N:
+		prs <g.Vdd, g.GND> {
+			g.Vdd -> C.b[i].d[j]-
+		}
+	) )
+}
+
+/************************************
+ *                                  *
+ *       acknowledge channels       *
+ *                                  *
+ ************************************/
+
+export template <pint N>
+defproc source_random_a1of(globals g; a1of<N> C)
+{
+	[ ~LAYOUT ->
+		(j:N: 
+			(k:N:
+				[ k > j -> spec { mk_exclhi(C.d[j], C.d[k]) } ]
+			)
+
+			prs <g.Vdd, g.GND>
+			{
+				~g.sReset & ~C.a -> C.d[j]+
+				 g.sReset |  C.a -> C.d[j]-
+			}
+		)
+	]
+}
+
+export template <pint N, sz>
+defproc source_disconnect_a1of(globals g; a1of<N> C)
+{
+	(j:N:
+		prs <g.Vdd, g.GND> {
+			g.Vdd -> C.d[j]-
+		}
+	)
+}
+
+/************************************
+ *                                  *
+ *multi-bundle acknowledge channels *
+ *                                  *
+ ************************************/
+
+export template <pint M, N>
+defproc source_random_aMx1ofN(globals g; aMx1ofN<M, N> C)
+{
+	[ ~LAYOUT ->
+		(i:M: (j:N: 
+			(k:N:
+				[ k > j -> spec { mk_exclhi(C.b[i].d[j], C.b[i].d[k]) } ]
+			)
+
+			prs <g.Vdd, g.GND>
+			{
+				~g.sReset & ~C.a -> C.b[i].d[j]+
+				 g.sReset |  C.a -> C.b[i].d[j]-
+			}
+		) )
+	]	
+}
+
+export template <pint M, N>
+defproc source_disconnect_aMx1ofN(globals g; aMx1ofN<M, N> C)
+{
+	(i:M: (j:N:
+		prs <g.Vdd, g.GND> {
+			g.Vdd -> C.b[i].d[j]-
+		}
+	) )
+}
+

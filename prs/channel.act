@@ -1,0 +1,99 @@
+import "globals.act";
+
+export template <pint N>
+deftype c1of <: int (bool d[N])
+{
+}
+
+
+/************************************
+ *                                  *
+ *          enable channels         *
+ *                                  *
+ ************************************/
+
+export template <pint N>
+defchan e1of <: chan(int) (c1of<N> b; bool d[N]; bool e)
+{
+	d = b.d;
+}
+
+export template <pint N>
+defchan ev1of <: chan(int) (c1of<N> b; bool d[N]; bool e, v)
+{
+	d = b.d;
+}
+
+export template <pint N>
+defchan en1of <: chan(int) (c1of<N> b; bool d[N]; bool e, n)
+{
+	d = b.d;
+}
+
+/************************************
+ *                                  *
+ *    multi-bundle enable channels  *
+ *                                  *
+ ************************************/
+
+export template <pint M, N>
+defchan eMx1ofN <: chan(int) (c1of<N> b[M]; bool e)
+{
+}
+
+export template <pint M, N>
+defchan evMx1ofN <: chan(int) (c1of<N> b[M]; bool e, v)
+{
+}
+
+export template <pint M, N>
+defchan enMx1ofN <: chan(int) (c1of<N> b[M]; bool e, n)
+{
+}
+
+
+/************************************
+ *                                  *
+ *       acknowledge channels       *
+ *                                  *
+ ************************************/
+
+export template <pint N>
+defchan a1of <: chan(int) (c1of<N> b; bool d[N]; bool a)
+{
+	d = b.d;
+}
+
+export template <pint N>
+defchan av1of <: chan(int) (c1of<N> b; bool d[N]; bool a, v)
+{
+	d = b.d;
+}
+
+export template <pint N>
+defchan an1of <: chan(int) (c1of<N> b; bool d[N]; bool a, n)
+{
+	d = b.d;
+}
+
+/************************************
+ *                                  *
+ *multi-bundle acknowledge channels *
+ *                                  *
+ ************************************/
+
+export template <pint M, N>
+defchan aMx1ofN <: chan(int) (c1of<N> b[M]; bool a)
+{
+}
+
+export template <pint M, N>
+defchan avMx1ofN <: chan(int) (c1of<N> b[M]; bool a, v)
+{
+}
+
+export template <pint M, N>
+defchan anMx1ofN <: chan(int) (c1of<N> b[M]; bool a, n)
+{
+}
+

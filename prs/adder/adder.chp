@@ -1,0 +1,8 @@
+*[A?a,B?b,Ci?c; S!(a&~b&~c | ~a&b&~c | ~a&~b&c | a&b&c),Co!(a&b | a&c | b&c)]
+
+*[A!rand(0,1)] ||
+*[B!rand(0,1)] ||
+*[Ci!rand(0,1)] ||
+*[S?] ||
+*[Co?]
+

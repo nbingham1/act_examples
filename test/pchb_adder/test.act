@@ -1,0 +1,15 @@
+import "globals.act";
+import "channel.act";
+import "source.act";
+import "sink.act";
+import "adder/adder.act";
+
+globals g;
+e1of<2> A, B, Ci, S, Co;
+pchb::adder test(g, A, B, Ci, S, Co);
+source_random_e1of<2> Asrc(g, A);
+source_random_e1of<2> Bsrc(g, B);
+source_random_e1of<2> Cisrc(g, Ci);
+sink_e1of<2, 6> Ssink(g, S);
+sink_e1of<2, 6> Cosink(g, Co);
+

@@ -1,0 +1,218 @@
+import "globals.act";
+import "channel.act";
+
+/************************************
+ *                                  *
+ *         enable channels          *
+ *                                  *
+ ************************************/
+
+export template <pint N, sz>
+defproc sink_e1of(globals g; e1of<N> C)
+{
+	prs <g.Vdd, g.GND>
+	{
+		(|i:N: C.d[i]<sz> ) -> C.e-
+		(&i:N: ~C.d[i]<PN*sz*N> ) -> C.e+
+	}
+}
+
+export template <pint N, sz>
+defproc sink_disconnect_e1of(globals g; e1of<N> C)
+{
+	prs <g.Vdd, g.GND>
+	{
+		g.Vdd<sz> -> C.e-
+	}
+}
+
+export template <pint N, sz>
+defproc sink_en1of(globals g; en1of<N> C)
+{
+	bool Cv;
+	prs <g.Vdd, g.GND>
+	{
+		C.n<sz> -> Cv-
+		~C.n<PN*sz> -> Cv+
+		Cv<sz> -> C.e-
+		~Cv<PN*sz> -> C.e+
+	}
+}
+
+export template <pint N, sz>
+defproc sink_disconnect_en1of(globals g; en1of<N> C)
+{
+	prs <g.Vdd, g.GND>
+	{
+		g.Vdd<sz> -> C.e-
+	}
+}
+
+export template <pint N, sz>
+defproc sink_ev1of(globals g; ev1of<N> C)
+{
+	prs <g.Vdd, g.GND>
+	{
+		C.v<sz> -> C.e-
+		~C.v<PN*sz> -> C.e+
+	}
+}
+
+export template <pint N, sz>
+defproc sink_disconnect_ev1of(globals g; ev1of<N> C)
+{
+	prs <g.Vdd, g.GND>
+	{
+		g.Vdd<sz> -> C.e-
+	}
+}
+
+
+/************************************
+ *                                  *
+ *   multi-bundle enable channels   *
+ *                                  *
+ ************************************/
+
+export template <pint M, N, sz>
+defproc sink_eMx1ofN(globals g; eMx1ofN<M, N> C)
+{
+	bool bn[M], _Ce;
+
+	(i:M: 
+		prs <g.Vdd, g.GND>
+		{
+			(|j:N: C.b[i].d[j]<sz> ) -> bn[i]-
+			(&j:N: ~C.b[i].d[j]<PN*sz*N> ) -> bn[i]+
+		}
+	)
+
+	prs <g.Vdd, g.GND>
+	{
+		(&i:M: bn[i]<sz*M> ) -> _Ce-
+		(&i:M: ~bn[i]<PN*sz*M> ) -> _Ce+
+		_Ce<sz> -> C.e-
+		~_Ce<PN*sz> -> C.e+
+	}
+}
+
+export template <pint M, N, sz>
+defproc sink_disconnect_eMx1ofN(globals g; eMx1ofN<M, N> C)
+{
+	prs <g.Vdd, g.GND>
+	{
+		g.Vdd<sz> -> C.e-
+	}
+}
+
+
+/************************************
+ *                                  *
+ *       acknowledge channels       *
+ *                                  *
+ ************************************/
+
+export template <pint N, sz>
+defproc sink_a1of(globals g; a1of<N> C)
+{
+	bool _Ca;
+	prs <g.Vdd, g.GND>
+	{
+		(|i:N: C.d[i]<sz> ) -> _Ca-
+		(&i:N: ~C.d[i]<PN*sz*N> ) -> _Ca+
+		_Ca<sz> -> C.a-
+		~_Ca<PN*sz> -> C.a+
+	}
+}
+
+export template <pint N, sz>
+defproc sink_disconnect_a1of(globals g; a1of<N> C)
+{
+	prs <g.Vdd, g.GND>
+	{
+		~g.GND<PN*sz> -> C.a+
+	}
+}
+
+export template <pint N, sz>
+defproc sink_an1of(globals g; an1of<N> C)
+{
+	prs <g.Vdd, g.GND>
+	{
+		C.n<sz> -> C.a-
+		~C.n<PN*sz> -> C.a+
+	}
+}
+
+export template <pint N, sz>
+defproc sink_disconnect_an1of(globals g; an1of<N> C)
+{
+	prs <g.Vdd, g.GND>
+	{
+		~g.GND<PN*sz> -> C.a+
+	}
+}
+
+export template <pint N, sz>
+defproc sink_av1of(globals g; av1of<N> C)
+{
+	bool Cn;
+	prs <g.Vdd, g.GND>
+	{
+		C.v<sz> -> Cn-
+		~C.v<PN*sz> -> Cn+
+		Cn<sz> -> C.a-
+		~Cn<PN*sz> -> C.a+
+	}
+}
+
+export template <pint N, sz>
+defproc sink_disconnect_av1of(globals g; av1of<N> C)
+{
+	prs <g.Vdd, g.GND>
+	{
+		~g.GND<PN*sz> -> C.a+
+	}
+}
+
+
+/************************************
+ *                                  *
+ *multi-bundle acknowledge channels *
+ *                                  *
+ ************************************/
+
+export template <pint M, N, sz>
+defproc sink_aMx1ofN(globals g; aMx1ofN<M, N> C)
+{
+	bool bn[M], _Ce, Ce;
+
+	(i:M: 
+		prs <g.Vdd, g.GND>
+		{
+			(|j:N: C.b[i].d[j]<sz> ) -> bn[i]-
+			(&j:N: ~C.b[i].d[j]<PN*sz*N> ) -> bn[i]+
+		}
+	)
+
+	prs <g.Vdd, g.GND>
+	{
+		// C-elements need an inverted output for the staticizer
+		(&i:M: bn[i]<sz*M> ) -> _Ce-
+		(&i:M: ~bn[i]<PN*sz*M> ) -> _Ce+
+		_Ce<sz> -> Ce-
+		~_Ce<PN*sz> -> Ce+
+		Ce<sz> -> C.a-
+		~Ce<PN*sz> -> C.a+
+	}
+}
+
+export template <pint M, N, sz>
+defproc sink_disconnect_aMx1ofN(globals g; aMx1ofN<M, N> C)
+{
+	prs <g.Vdd, g.GND>
+	{
+		~g.GND<PN*sz> -> C.a+
+	}
+}
+

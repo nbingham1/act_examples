@@ -1,0 +1,129 @@
+import "globals.act";
+import "channel.act";
+import "source.act";
+import "sink.act";
+
+namespace pcfb
+{
+
+export defproc adder(globals g; e1of<2> A, B, Ci, S, Co)
+{
+	c1of<2> _S, _Co;
+	bool Rv;
+	bool Fe, _Fe, en;
+	A.e = Fe;
+	B.e = Fe;
+	Ci.e = Fe;
+	prs<g.Vdd, g.GND>
+	{
+		// If you are going to build an adder, you use really use shared gate networks
+		g._sReset & en & S.e                  -> @sen-
+		~@sen   & A.d[0]                      -> @min_a-
+		~@sen   & A.d[1]                      -> @maj_a-
+		~@min_a & B.d[0] | ~@maj_a & B.d[1]   -> @min_b-
+		~@min_a & B.d[1] | ~@maj_a & B.d[0]   -> @maj_b-
+		~@min_b & Ci.d[0] | ~@maj_b & Ci.d[1] -> _S.d[0]-
+		~@min_b & Ci.d[1] | ~@maj_b & Ci.d[0] -> _S.d[1]-
+
+		g._sReset & en & Co.e               -> @cen-
+		~@cen   & A.d[0]                    -> @cmin_a-
+		~@cen   & A.d[1]                    -> @cmaj_a-
+		~@cmin_a & B.d[1] | ~@cmaj_a & B.d[0] -> @mid-
+		~@cmin_a & B.d[0] | ~@mid   & Ci.d[0] -> _Co.d[0]-
+		~@cmaj_a & B.d[1] | ~@mid   & Ci.d[1] -> _Co.d[1]-
+		
+		// g._sReset & en & S.e & (A.d[1] & B.d[1] & Ci.d[0] | A.d[1] & B.d[0] & Ci.d[1] | A.d[0] & B.d[1] & Ci.d[1] | A.d[0] & B.d[0] & Ci.d[0]) -> _S.d[0]-
+		// g._sReset & en & S.e & (A.d[1] & B.d[0] & Ci.d[0] | A.d[0] & B.d[1] & Ci.d[0] | A.d[0] & B.d[0] & Ci.d[1] | A.d[1] & B.d[1] & Ci.d[1]) -> _S.d[1]-
+		// g._sReset & en & Co.e & (A.d[1] & B.d[0] & Ci.d[0] | A.d[0] & B.d[1] & Ci.d[0] | A.d[0] & B.d[0] & Ci.d[1] | A.d[0] & B.d[0] & Ci.d[0]) -> _Co.d[0]-
+		// g._sReset & en & Co.e & (A.d[1] & B.d[1] & Ci.d[0] | A.d[1] & B.d[0] & Ci.d[1] | A.d[0] & B.d[1] & Ci.d[1] | A.d[1] & B.d[1] & Ci.d[1]) -> _Co.d[1]-
+
+		~_S.d[0] -> S.d[0]+
+		~_S.d[1] -> S.d[1]+
+		~_Co.d[0] -> Co.d[0]+
+		~_Co.d[1] -> Co.d[1]+
+		
+		(~_S.d[0] | ~_S.d[1]) & (~_Co.d[0] | ~_Co.d[1]) -> Rv+
+
+		g._sReset & en & Rv -> Fe-
+		~Fe -> _Fe+
+
+		_Fe -> en-
+
+		~g._pReset | ~en & ~S.e -> _S.d[0]+
+		~g._pReset | ~en & ~S.e -> _S.d[1]+
+		~g._pReset | ~en & ~Co.e -> _Co.d[0]+
+		~g._pReset | ~en & ~Co.e -> _Co.d[1]+
+		~g._pReset | ~en & ~A.d[0] & ~A.d[1] & ~B.d[0] & ~B.d[1] & ~Ci.d[0] & ~Ci.d[1] -> Fe+
+
+		_S.d[0] -> S.d[0]-
+		_S.d[1] -> S.d[1]-
+		_Co.d[0] -> Co.d[0]-
+		_Co.d[1] -> Co.d[1]-
+		Fe -> _Fe-
+		
+		(_S.d[0] & _S.d[1]) & (_Co.d[0] & _Co.d[1]) -> Rv-
+
+		~_Fe & ~Rv -> en+
+	}
+}
+
+}
+
+namespace pchb
+{
+
+export defproc adder(globals g; e1of<2> A, B, Ci, S, Co)
+{
+	c1of<2> _S, _Co;
+	bool Rv;
+	bool Fe;
+	A.e = Fe;
+	B.e = Fe;
+	Ci.e = Fe;
+	prs<g.Vdd, g.GND>
+	{
+		g._sReset & S.e & Fe                  -> @sen-
+		~@sen   & A.d[0]                      -> @min_a-
+		~@sen   & A.d[1]                      -> @maj_a-
+		~@min_a & B.d[0] | ~@maj_a & B.d[1]   -> @min_b-
+		~@min_a & B.d[1] | ~@maj_a & B.d[0]   -> @maj_b-
+		~@min_b & Ci.d[0] | ~@maj_b & Ci.d[1] -> _S.d[0]-
+		~@min_b & Ci.d[1] | ~@maj_b & Ci.d[0] -> _S.d[1]-
+
+		g._sReset & Co.e & Fe               -> @cen-
+		~@cen   & A.d[0]                    -> @cmin_a-
+		~@cen   & A.d[1]                    -> @cmaj_a-
+		~@cmin_a & B.d[1] | ~@cmaj_a & B.d[0] -> @mid-
+		~@cmin_a & B.d[0] | ~@mid   & Ci.d[0] -> _Co.d[0]-
+		~@cmaj_a & B.d[1] | ~@mid   & Ci.d[1] -> _Co.d[1]-
+
+		// g._sReset & S.e & Fe & (A.d[1] & B.d[1] & Ci.d[0] | A.d[1] & B.d[0] & Ci.d[1] | A.d[0] & B.d[1] & Ci.d[1] | A.d[0] & B.d[0] & Ci.d[0]) -> _S.d[0]-
+		// g._sReset & S.e & Fe & (A.d[1] & B.d[0] & Ci.d[0] | A.d[0] & B.d[1] & Ci.d[0] | A.d[0] & B.d[0] & Ci.d[1] | A.d[1] & B.d[1] & Ci.d[1]) -> _S.d[1]-
+		// g._sReset & Co.e & Fe & (A.d[1] & B.d[0] & Ci.d[0] | A.d[0] & B.d[1] & Ci.d[0] | A.d[0] & B.d[0] & Ci.d[1] | A.d[0] & B.d[0] & Ci.d[0]) -> _Co.d[0]-
+		// g._sReset & Co.e & Fe & (A.d[1] & B.d[1] & Ci.d[0] | A.d[1] & B.d[0] & Ci.d[1] | A.d[0] & B.d[1] & Ci.d[1] | A.d[1] & B.d[1] & Ci.d[1]) -> _Co.d[1]-
+
+		~_S.d[0] -> S.d[0]+
+		~_S.d[1] -> S.d[1]+
+		~_Co.d[0] -> Co.d[0]+
+		~_Co.d[1] -> Co.d[1]+
+		(~_S.d[0] | ~_S.d[1]) & (~_Co.d[0] | ~_Co.d[1]) -> Rv+
+
+		g._sReset & Rv -> Fe-
+
+		~g._pReset | ~S.e & ~Fe -> _S.d[0]+
+		~g._pReset | ~S.e & ~Fe -> _S.d[1]+
+		~g._pReset | ~Co.e & ~Fe -> _Co.d[0]+
+		~g._pReset | ~Co.e & ~Fe -> _Co.d[1]+
+
+		_S.d[0] -> S.d[0]-
+		_S.d[1] -> S.d[1]-
+		_Co.d[0] -> Co.d[0]-
+		_Co.d[1] -> Co.d[1]-
+		(_S.d[0] & _S.d[1]) & (_Co.d[0] & _Co.d[1]) -> Rv-
+		
+		~g._pReset | ~Rv & ~A.d[0] & ~A.d[1] & ~B.d[0] & ~B.d[1] & ~Ci.d[0] & ~Ci.d[1] -> Fe+
+	}
+}
+
+
+}
