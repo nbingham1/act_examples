@@ -1,0 +1,16 @@
+_R.f+,_R.t+,_Le-; [R.e&~L.f&~L.t&L.e];
+*[[  R.e & L.e & L.f -> _R.f-
+  [] R.e & L.e & L.t -> _R.t-
+  ]; _Le+; [~R.e]; ([~L.f]; _R.f+ || [~L.t]; _R.t+); _Le-
+ ]||
+R.f-,R.t-,L.e+; [_R.f & _R.t & ~_Le];
+*[[ ~_R.f -> R.f+
+  :  _R.f -> R.f-
+  : ~_R.t -> R.t+
+  :  _R.t -> R.t-
+  : ~_Le -> L.e+
+  :  _Le -> L.e-
+ ]]||
+
+L.f-,L.t-; [L.e];  *[[1->L.f+:1->L.t+]; [~L.e]; L.f-,L.t-; [L.e]]||
+R.e+; [~R.f&~R.t]; *[[R.f|R.t]; R.e-; [~R.f&~R.t]; R.e+]

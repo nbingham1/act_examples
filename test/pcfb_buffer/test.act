@@ -1,0 +1,12 @@
+import "globals.act";
+import "channel.act";
+import "source.act";
+import "sink.act";
+import "buffer.act";
+
+globals g;
+e1of<2> L, R;
+pcfb::buffer test(g, L, R);
+source_random_e1of<2> Lsrc(g, L);
+sink_e1of<2, 6> Rsink(g, R);
+
