@@ -7,11 +7,10 @@ namespace wchb
 export defproc buffer(globals g; e1of<2> L, R)
 {
 	c1of<2> _R;
-	bool Rv;
 	prs<g.Vdd, g.GND>
 	{
-		R.e & L.d[0] -> _R.d[0]-
-		R.e & L.d[1] -> _R.d[1]-
+		g._sReset & R.e & L.d[0] -> _R.d[0]-
+		g._sReset & R.e & L.d[1] -> _R.d[1]-
 		~_R.d[0] -> R.d[0]+
 		~_R.d[1] -> R.d[1]+
 
@@ -41,7 +40,7 @@ export defproc buffer(globals g; e1of<2> L, R)
 		g._sReset & R.e & L.e & L.d[1] -> _R.d[1]-
 		~_R.d[0] -> R.d[0]+
 		~_R.d[1] -> R.d[1]+
-		~_R.d[0]|~_R.d[1] -> Rv+
+		~_R.d[0] | ~_R.d[1] -> Rv+
 		
 		g._sReset & Rv -> L.e-
 		
@@ -49,7 +48,7 @@ export defproc buffer(globals g; e1of<2> L, R)
 		~g._pReset | ~R.e & ~L.e -> _R.d[1]+
 		_R.d[0] -> R.d[0]-
 		_R.d[1] -> R.d[1]-
-		_R.d[0]&_R.d[1] -> Rv-
+		_R.d[0] & _R.d[1] -> Rv-
 
 		~g._pReset | ~Rv & ~L.d[0] & ~L.d[1] -> L.e+
 	}
@@ -70,7 +69,7 @@ export defproc buffer(globals g; e1of<2> L, R)
 		en & R.e & L.d[1] -> _R.d[1]-
 		~_R.d[0] -> R.d[0]+
 		~_R.d[1] -> R.d[1]+
-		~_R.d[0]|~_R.d[1] -> Rv+
+		~_R.d[0] | ~_R.d[1] -> Rv+
 		en & Rv -> L.e-
 		~L.e -> _Le+
 
@@ -81,7 +80,7 @@ export defproc buffer(globals g; e1of<2> L, R)
 		~g._pReset | ~en & ~L.d[0] & ~L.d[1] -> L.e+
 		_R.d[0] -> R.d[0]-
 		_R.d[1] -> R.d[1]-
-		_R.d[0]&_R.d[1] -> Rv-
+		_R.d[0] & _R.d[1] -> Rv-
 		L.e -> _Le-
 
 		~g.sReset & ~Rv & ~_Le -> en+

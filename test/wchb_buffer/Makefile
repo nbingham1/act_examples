@@ -19,11 +19,11 @@ test.sim: test.prs prsim.rc
 
 #-include $(PRDEPS)
 test.prs: test.act
-	@adepend -DLAYOUT=false -DPRSIM=true -DDUT=true $< > $(subst .act,.prdep,$<)
-	@aflat -DLAYOUT=false -DPRSIM=true -DDUT=true $< > $@ && : || rm -f $@	 	
+	adepend -DLAYOUT=false -DPRSIM=true -DDUT=true $< > $(subst .act,.prdep,$<)
+	aflat -DLAYOUT=false -DPRSIM=true -DDUT=true $< > $@ && : || rm -f $@	 	
 
 layout: test.act
-	prs2net -DLAYOUT=true -B -p "pchb::adder<>" test.act > layout.spi
+	prs2net -DLAYOUT=true -B -p "wchb::buffer<>" test.act > layout.spi
 
 clean: clean_prs clean_prsim
 

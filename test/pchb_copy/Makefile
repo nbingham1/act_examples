@@ -23,7 +23,7 @@ test.prs: test.act
 	@aflat -DLAYOUT=false -DPRSIM=true -DDUT=true $< > $@ && : || rm -f $@	 	
 
 layout: test.act
-	prs2net -DLAYOUT=true -B -p "pchb::adder<>" test.act > layout.spi
+	prs2net -DLAYOUT=true -B -p "pchb::copy<>" test.act > layout.spi
 
 clean: clean_prs clean_prsim
 
